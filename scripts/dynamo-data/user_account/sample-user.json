@@ -1,0 +1,15 @@
+{
+  "username": {
+   "S": "sampleuser"
+  },
+  "roles": {
+   "L": [
+    {
+     "S": "sample"
+    }
+   ]
+  },
+  "system": {
+   "S": "rest-api-starter"
+  }
+ }

@@ -1,0 +1,223 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  The services supporting REST API starter applications
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+- AWS::Serverless-2016-10-31
+
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+  # DynamoDB Setup
+  #
+  # Creates a set of tables for use by the application.
+  UserAccountTable: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: "AWS_USER_ACCOUNT"
+      BillingMode: "PAY_PER_REQUEST"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "username"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "username"
+          KeyType: "HASH"
+
+  PostTable: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: "POST"
+      BillingMode: "PAY_PER_REQUEST"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "postId"
+          AttributeType: "S"
+        -
+          AttributeName: "slug"
+          AttributeType: "S"
+        -
+          AttributeName: "createDate"
+          AttributeType: "N"
+      KeySchema: 
+        - 
+          AttributeName: "postId"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes: 
+        - 
+          IndexName: "PostSlugIndex"
+          KeySchema: 
+            - 
+              AttributeName: "slug"
+              KeyType: "HASH"
+            - 
+              AttributeName: "createDate"
+              KeyType: "RANGE"
+          Projection: 
+            ProjectionType: "ALL"
+
+  # Cognito Setup
+  #
+  # Creates a user pool in cognito for your app to auth against
+  # This example requires MFA and validates the phone number to use as MFA
+  # Other fields can be added to the schema
+  AppUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: app-user-pool
+      MfaConfiguration: "OFF"
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      UsernameConfiguration:
+        CaseSensitive: false
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - 
+            Name: admin_only
+            Priority: 2
+      Policies:
+        PasswordPolicy:
+          RequireLowercase: false
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: false
+          MinimumLength: 8
+      Schema:
+        - 
+          Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+  
+  SampleUser:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      UserAttributes: 
+        -
+          Name: email
+          Value: "sample@example.com"
+      Username: "sampleuser"
+      UserPoolId: !Ref AppUserPool
+
+  AppUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: app-user-pool-client
+      GenerateSecret: false
+      UserPoolId: !Ref AppUserPool
+  
+  AppIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: "AppIdentity"
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders: 
+        - 
+          ClientId: !Ref AppUserPoolClient
+          ProviderName: !GetAtt AppUserPool.ProviderName
+  
+  AppCognitoAuthorizedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - 
+            Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref AppIdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      Policies:
+        - 
+          PolicyName: "AppCognitoAuthorizedPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                  - "cognito-identity:*"
+                Resource: "*"
+  
+  # Assigns the roles to the Identity Pool
+  AppIdentityPoolRoleMapping:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref AppIdentityPool
+      Roles:
+        authenticated: !GetAtt AppCognitoAuthorizedRole.Arn
+
+  # Lambda Function Setup
+  #
+  # Lambda functions and their associated API Gateway are configured here.
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: V1
+      OpenApiVersion: '2.0'
+      Description: API supporting the application
+      Cors:
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowMethods: "'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: AppAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          AppAuthorizer:
+            UserPoolArn: !GetAtt AppUserPool.Arn
+            AuthorizationScopes:
+              - "aws.cognito.signin.user.admin"
+
+  postService:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: postServiceFunction
+      Handler: src/handlers/post-service.handler
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 10
+      Description: CRUD service for posts.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserAccountTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Auth: 
+              Authorizer: AppAuthorizer
+            Path: /post-service
+            Method: ANY
+            RestApiId: !Ref ApiGatewayApi
+
+Outputs:
+  WebEndpoint:
+    Description: "Service endpoint URL for your App configuration"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/V1/"
+  UserPoolId:
+    Description: "The ID of the UserPool for use when running the environment setup script"
+    Value: !Ref AppUserPool
+  UserPoolClientId:
+    Description: "The AWS ClientId that should be used in your authentication configuration"
+    Value: !Ref AppUserPoolClient
