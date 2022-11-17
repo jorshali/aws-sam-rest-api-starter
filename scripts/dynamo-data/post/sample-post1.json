@@ -9,12 +9,12 @@
    "S": "jacob@focus.dev"
   },
   "slug": {
-    "S": "my-first-post"
+    "S": "setup-success"
   },
   "title": {
-   "S": "My Sample Post"
+   "S": "Setup Success!"
   },
   "content": {
-   "S": "This is my sample post."
+   "S": "The setup of the aws-rest-api-starter project was a success!"
   }
  }

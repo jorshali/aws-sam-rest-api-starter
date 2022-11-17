@@ -1,3 +1,7 @@
+const UserRepository = require('./UserRepository');
+const User = require('./User');
+const ErrorMessages = require('./ErrorMessages');
+
 const defaultHeaders = () => {
   return {
     'Content-Type': 'application/json',

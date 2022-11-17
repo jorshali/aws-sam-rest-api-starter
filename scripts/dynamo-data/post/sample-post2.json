@@ -1,0 +1,20 @@
+{
+  "postId": {
+   "S": "1"
+  },
+  "createDate": {
+   "N": "1656803291746"
+  },
+  "author": {
+   "S": "jacob@focus.dev"
+  },
+  "slug": {
+    "S": "customize-the-starter"
+  },
+  "title": {
+   "S": "Customize the starter..."
+  },
+  "content": {
+   "S": "Now you can customize the starter project to suit your needs."
+  }
+ }

@@ -1,5 +1,5 @@
-const { currentUser } = require('../common/Utility');
-const { PostRepository } = require('../common/PostRepository');
+const { currentUser, defaultHeaders } = require('../common/Utility');
+const PostRepository = require('../common/PostRepository');
 const { StatusCodes } = require('http-status-codes');
 const { v4: uuidv4 } = require('uuid');
 
@@ -27,6 +27,8 @@ exports.handler = async (event, context) => {
       case 'GET':
         const slug = event.queryStringParameters.postSlug;
 
+        console.log(slug);
+        
         if (!slug) {
           statusCode = StatusCodes.BAD_REQUEST;
           throw new Error('A post slug must be provided');

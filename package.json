@@ -6,11 +6,12 @@
   },
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.1255.0",
     "http-status-codes": "^2.2.0",
-    "jwt-decode": "^3.1.2"
+    "jwt-decode": "^3.1.2",
+    "uuid": "3.4.0"
   },
   "devDependencies": {
+    "aws-sdk": "^2.1255.0",
     "jest": "^29.3.1"
   }
 }

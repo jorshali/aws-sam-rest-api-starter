@@ -76,18 +76,27 @@ Resources:
       MfaConfiguration: "OFF"
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: true
+        InviteMessageTemplate:
+          EmailMessage: "Your username is {username} and temporary password is {####}"
+          EmailSubject: "Your AWS Starter App temporary password"
+      UsernameAttributes:
+        - email
       UsernameConfiguration:
         CaseSensitive: false
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: "Your verification code is {####}.  Do not share this code with anyone."
+        EmailSubject: "Your AWS Starter App verification code"
       AccountRecoverySetting:
         RecoveryMechanisms:
           - 
-            Name: admin_only
+            Name: verified_email
             Priority: 2
       Policies:
         PasswordPolicy:
           RequireLowercase: false
           RequireNumbers: true
-          RequireSymbols: false
+          RequireSymbols: true
           RequireUppercase: false
           MinimumLength: 8
       Schema:
@@ -96,16 +105,6 @@ Resources:
           AttributeDataType: String
           Mutable: false
           Required: true
-  
-  SampleUser:
-    Type: AWS::Cognito::UserPoolUser
-    Properties:
-      UserAttributes: 
-        -
-          Name: email
-          Value: "sample@example.com"
-      Username: "sampleuser"
-      UserPoolId: !Ref AppUserPool
 
   AppUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -207,7 +206,7 @@ Resources:
           Properties:
             Auth: 
               Authorizer: AppAuthorizer
-            Path: /post-service
+            Path: "/{proxy+}"
             Method: ANY
             RestApiId: !Ref ApiGatewayApi
 

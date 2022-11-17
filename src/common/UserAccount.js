@@ -1,4 +1,3 @@
-
 class UserAccount {
   constructor(data) {
     if (data) {

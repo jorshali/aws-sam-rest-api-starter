@@ -4,7 +4,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const Post = require('./Post');
 
 const TableName = 'POST';
-const SlugIndex = 'SlugIndex';
+const SlugIndex = 'PostSlugIndex';
 
 class PostRepository {
   constructor(context) {
@@ -20,6 +20,8 @@ class PostRepository {
           ":slug": slug
       }
     }).promise();
+    
+    console.log(postResults);
     
     if (!postResults.Items || postResults.Items.length === 0) {
       return [];
