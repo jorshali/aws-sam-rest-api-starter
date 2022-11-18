@@ -184,11 +184,11 @@ Resources:
             AuthorizationScopes:
               - "aws.cognito.signin.user.admin"
 
-  postService:
+  PostServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: postServiceFunction
-      Handler: src/handlers/post-service.handler
+      CodeUri: post-service/
+      Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -201,14 +201,30 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref UserAccountTable
       Events:
-        Api:
+        RootApi:
           Type: Api
           Properties:
             Auth: 
               Authorizer: AppAuthorizer
-            Path: "/{proxy+}"
+            Path: /post-service
             Method: ANY
             RestApiId: !Ref ApiGatewayApi
+        WildcardApi:
+          Type: Api
+          Properties:
+            Auth: 
+              Authorizer: AppAuthorizer
+            Path: /post-service/{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGatewayApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+        - app.ts
 
 Outputs:
   WebEndpoint:

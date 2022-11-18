@@ -1,18 +1,14 @@
-const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
-const provider = new AWS.CognitoIdentityServiceProvider();
+import { UserAccount } from "./UserAccount";
+import { DynamoDB, CognitoIdentityServiceProvider } from "aws-sdk";
+import { User } from "./User";
 
-const UserAccount = require('./UserAccount');
-const ErrorMessages = require('./ErrorMessages');
+const dynamo = new DynamoDB.DocumentClient();
+const provider = new CognitoIdentityServiceProvider();
 
 const TableName = 'AWS_USER_ACCOUNT';
 
-class UserRepository {
-  constructor(context) {
-    this.context = context;
-  }
-  
-  findUserInfo = async (accessToken) => {
+export class UserRepository {
+  findUserInfo = async (accessToken: string) => {
     return new Promise((resolve, reject) => {
       provider.getUser({
         AccessToken: accessToken
@@ -26,7 +22,7 @@ class UserRepository {
     });
   };
 
-  findUserAccount = async (user) => {
+  findUserAccount = async (user: User) => {
     const username = user.getUsername().toLowerCase();
 
     console.log(username);
@@ -40,11 +36,9 @@ class UserRepository {
     }).promise();
 
     if (!userAccountResults || !userAccountResults.Items || userAccountResults.Items.length === 0) {
-      ErrorMessages.userNotFound();
+      throw new Error('A user account could not be found for this user');
+    } else {
+      return new UserAccount(userAccountResults.Items[0]);
     }
-
-    return new UserAccount(userAccountResults.Items[0]);
   };
 }
-
-module.exports = UserRepository;

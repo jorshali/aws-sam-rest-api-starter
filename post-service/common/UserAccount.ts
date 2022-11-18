@@ -1,5 +1,9 @@
-class UserAccount {
-  constructor(data) {
+export class UserAccount {
+  username: string;
+  system: string;
+  roles: string[];
+  
+  constructor(data: any) {
     if (data) {
       this.username = data.username;
       this.system = data.system;
@@ -7,9 +11,7 @@ class UserAccount {
     }
   }
 
-  hasRole(role) {
+  hasRole(role: string) {
     return this.roles.includes(role);
   }
 }
-
-module.exports = UserAccount;
