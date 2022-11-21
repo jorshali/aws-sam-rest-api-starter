@@ -3,13 +3,6 @@ import { UserRepository } from "./UserRepository";
 
 
 export class Utility {
-  static defaultHeaders = () => {
-    return {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    };
-  }
-
   static currentUser = async (event: any, config: any) => {
     const userRepository = new UserRepository();
     const user = new User(event.headers['Authorization'], config ? config.useEmail : false);

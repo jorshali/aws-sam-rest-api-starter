@@ -35,7 +35,7 @@ export class PostRepository {
     console.log(postResults);
     
     if (!postResults.Items || postResults.Items.length === 0) {
-      return null;
+      return undefined;
     } else {
       return new Post(postResults.Items[0]);
     }

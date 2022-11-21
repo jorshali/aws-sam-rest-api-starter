@@ -1,15 +1,35 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { Post } from './common/Post';
+import { AwsFunctionRouter } from './common/AwsFunctionRouter';
+import { AwsRequestContext } from './common/AwsRequestContext';
 import { PostRepository } from './common/PostRepository';
-import { RESTRouter } from './common/RESTRouter';
 import { Utility } from './common/Utility';
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const router = new AwsFunctionRouter({
+    basePath: '/post-service',
+    includeCORS: true
+  })
+  .get('', async (route) => {
+    const postRepository = new PostRepository();
+
+    return route.okResponse(await postRepository.findAll());
+  })
+  .get('/:id', async (route, requestContext) => {
+    const postRepository = new PostRepository();
+
+    const id = route.getPathParams(requestContext).id;
+    const post = await postRepository.findPostById(id);
+
+    if (!post) {
+      return route.errorResponse(StatusCodes.NOT_FOUND);
+    }
+
+    return route.okResponse(post);
+  });
+
+
+export const lambdaHandler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
   console.log('Received event:', JSON.stringify(event, null, 2));
-  
-  console.log(event.httpMethod);
-  console.log(event.path);
 
   const user = await Utility.currentUser(event, {
     useEmail: true
@@ -22,15 +42,5 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
     };
   }
 
-  const postRepository = new PostRepository();
-
-  const router = new RESTRouter<Post>('/post-service')
-    .onFind(async (e) => {
-      return await postRepository.findAll();
-    })
-    .onFindById(async (e, id) => {
-      return await postRepository.findPostById(id);
-    });
-
-  return router.handleRequest(event);
+  return await router.handle(new AwsRequestContext(event, context));
 };
