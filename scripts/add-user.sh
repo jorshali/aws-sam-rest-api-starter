@@ -2,8 +2,6 @@ SCRIPT_PATH=$(dirname -- "$(readlink -f "${BASH_SOURCE}")")
 
 echo Adding a REST API User.
 echo -----------------------------------------
-
-echo -----------------------------------------
 echo Enter the UserPoolId for the generated Cognito User Pool:
 read USER_POOL_ID
 echo Enter the email address for the user you want to create:

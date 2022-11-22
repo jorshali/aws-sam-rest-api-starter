@@ -7,8 +7,6 @@ export class AwsFunctionRouter extends FunctionRouter<Post, AwsRequestContext> {
   async handle(requestContext: AwsRequestContext): Promise<APIGatewayProxyResult> {
     const response = await super.handleRequest(requestContext);
 
-    console.log(response.headers);
-    
     return {
       headers: response.headers,
       statusCode: response.statusCode,
