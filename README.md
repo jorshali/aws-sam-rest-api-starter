@@ -1,15 +1,17 @@
 # aws-sam-rest-api-starter
 
-A starter project for creating a REST API with [AWS SAM](https://aws.amazon.com/serverless/sam/) using TypeScript.
+A TypeScript-based starter project for creating a REST API with [AWS SAM](https://aws.amazon.com/serverless/sam/).
+
+## Introduction
 
 The project generates a REST API that uses the following AWS services:
 
-- Cognito
-- AWS Gateway
-- Lambda
-- DynamoDB
+- [Cognito](https://www.google.com/search?client=safari&rls=en&q=aws+cognito&ie=UTF-8&oe=UTF-8)
+- [AWS Gateway](https://aws.amazon.com/api-gateway/)
+- [Lambda](https://aws.amazon.com/lambda/)
+- [DynamoDB](https://aws.amazon.com/dynamodb/)
 
-By simply following the setup instructinos, you can have a secured REST API deployed to AWS in minutes.
+By simply following the setup instructinos, you can have a secured, TypeScript-based REST API deployed to AWS in minutes.
 
 ## Installation
 
