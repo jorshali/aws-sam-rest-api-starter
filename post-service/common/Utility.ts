@@ -1,7 +1,6 @@
 import { User } from "./User";
 import { UserRepository } from "./UserRepository";
 
-
 export class Utility {
   static currentUser = async (event: any, config: any) => {
     const userRepository = new UserRepository();

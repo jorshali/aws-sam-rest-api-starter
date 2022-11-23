@@ -102,4 +102,4 @@ Now that you have the project running, you probably want to do something useful.
 - `GET /posts`:  retrieve all Posts
 - `GET /posts/:id`:  retrieve the Post with the given ID
 
-These service calls retrieve the data found in the DynamoDB table `POST`.  To customize this service, have a look at the `post-service\app.ts` file.
+These service calls retrieve the data found in the DynamoDB table `POST`.  To customize this service, have a look at the `post-service\index.ts` file.

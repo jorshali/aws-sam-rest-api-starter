@@ -1,7 +1,7 @@
 {
   "name": "aws-sam-rest-api-starter",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "unit": "jest",
     "lint": "eslint '*.ts' --quiet --fix",
@@ -12,7 +12,6 @@
   "dependencies": {
     "generic-rest-api-router": "^1.0.0",
     "jwt-decode": "^3.1.2",
-    "node-match-path": "^0.6.3",
     "uuid": "3.4.0"
   },
   "devDependencies": {

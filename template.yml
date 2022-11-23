@@ -188,7 +188,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: post-service/
-      Handler: app.lambdaHandler
+      Handler: index.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -224,7 +224,9 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-        - app.ts
+        - index.ts
+        External:
+        - 'aws-sdk'
 
 Outputs:
   WebEndpoint:
