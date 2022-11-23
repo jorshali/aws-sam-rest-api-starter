@@ -187,6 +187,7 @@ Resources:
   PostServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: postServiceFunction
       CodeUri: post-service/
       Handler: index.lambdaHandler
       Runtime: nodejs16.x
@@ -231,7 +232,7 @@ Resources:
 Outputs:
   WebEndpoint:
     Description: "Service endpoint URL for your App configuration"
-    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/V1/"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/V1"
   UserPoolId:
     Description: "The ID of the UserPool for use when running the environment setup script"
     Value: !Ref AppUserPool
