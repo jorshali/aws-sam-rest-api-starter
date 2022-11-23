@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { AwsFunctionRouter } from './common/AwsFunctionRouter';
-import { AwsRequestContext } from './common/AwsRequestContext';
+import { AwsRequestContext, AwsFunctionRouter } from 'aws-rest-api-router';
+
 import { PostRepository } from './common/PostRepository';
 import { Utility } from './common/Utility';
 
