@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from "aws-lambda";
-import { FunctionRouter } from "simple-rest-api-router";
+import { FunctionRouter } from "generic-rest-api-router";
 import { AwsRequestContext } from "./AwsRequestContext";
 import { Post } from "./Post";
 

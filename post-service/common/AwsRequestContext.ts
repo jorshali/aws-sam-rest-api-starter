@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, Context } from "aws-lambda";
-import { RequestContext } from "simple-rest-api-router";
+import { RequestContext } from "generic-rest-api-router";
 
 export class AwsRequestContext implements RequestContext {
   constructor(private event: APIGatewayProxyEvent, private context: Context) {
@@ -16,5 +16,4 @@ export class AwsRequestContext implements RequestContext {
   getBody(): string {
     return this.event.body || '';
   }
-  
 }
