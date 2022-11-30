@@ -15,7 +15,7 @@ By simply following the setup instructinos, you can have a secured, TypeScript-b
 
 ## Installation
 
-The following prequesites are needed:
+The following prerequesites are needed:
 * [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html)
 * [Docker (recommended)](https://docs.docker.com/get-docker/)
 
