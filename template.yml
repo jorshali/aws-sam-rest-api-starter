@@ -32,10 +32,10 @@ Resources:
           AttributeName: "username"
           KeyType: "HASH"
 
-  PostTable: 
+  BlogPostTable: 
     Type: AWS::DynamoDB::Table
     Properties: 
-      TableName: "POST"
+      TableName: "BLOG_POST"
       BillingMode: "PAY_PER_REQUEST"
       AttributeDefinitions: 
         - 
@@ -184,21 +184,21 @@ Resources:
             AuthorizationScopes:
               - "aws.cognito.signin.user.admin"
 
-  PostServiceFunction:
+  BlogPostsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: postServiceFunction
-      CodeUri: post-service/
+      FunctionName: blogPostsFunction
+      CodeUri: blogposts/
       Handler: index.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
       MemorySize: 128
       Timeout: 10
-      Description: CRUD service for posts.
+      Description: CRUD service for blog posts.
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref PostTable
+            TableName: !Ref BlogPostTable
         - DynamoDBCrudPolicy:
             TableName: !Ref UserAccountTable
       Events:
@@ -207,7 +207,7 @@ Resources:
           Properties:
             Auth: 
               Authorizer: AppAuthorizer
-            Path: /post-service
+            Path: /blogposts
             Method: ANY
             RestApiId: !Ref ApiGatewayApi
         WildcardApi:
@@ -215,7 +215,7 @@ Resources:
           Properties:
             Auth: 
               Authorizer: AppAuthorizer
-            Path: /post-service/{proxy+}
+            Path: /blogposts/{proxy+}
             Method: ANY
             RestApiId: !Ref ApiGatewayApi
     Metadata: # Manage esbuild properties

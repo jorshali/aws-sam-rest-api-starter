@@ -1,12 +1,12 @@
 import { DynamoDB } from 'aws-sdk';
-import { Post } from './Post';
+import { BlogPost } from './BlogPost';
 
 const dynamo = new DynamoDB.DocumentClient();
 
-const TableName = 'POST';
+const TableName = 'BLOG_POST';
 const SlugIndex = 'PostSlugIndex';
 
-export class PostRepository {
+export class BlogPostRepository {
   findAll = async () => {
     const postResults = await dynamo.scan({
       TableName
@@ -19,7 +19,7 @@ export class PostRepository {
     } else {
       const postsData = postResults.Items;
       
-      return postsData.map((postData) => new Post(postData)).reverse();
+      return postsData.map((postData) => new BlogPost(postData)).reverse();
     }
   }
 
@@ -37,7 +37,7 @@ export class PostRepository {
     if (!postResults.Items || postResults.Items.length === 0) {
       return undefined;
     } else {
-      return new Post(postResults.Items[0]);
+      return new BlogPost(postResults.Items[0]);
     }
   };
 
@@ -58,14 +58,21 @@ export class PostRepository {
     } else {
       const postsData = postResults.Items;
       
-      return postsData.map((postData) => new Post(postData)).reverse();
+      return postsData.map((postData) => new BlogPost(postData)).reverse();
     }
   };
 
-  savePost = async (post: Post) => {
-    await dynamo.put({
+  savePost = async (post: BlogPost) => {
+    return await dynamo.put({
       TableName,
       Item: post
     }).promise();
   };
+
+  deletePost = async (id: string) => {
+    return await dynamo.delete({ 
+      TableName,
+      Key: { postId: id }
+    });
+  }
 }

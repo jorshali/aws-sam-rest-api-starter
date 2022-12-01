@@ -97,9 +97,12 @@ $ sam local start-api
 
 ## Customizing the Project
 
-Now that you have the project running, you probably want to do something useful.  The default project creates a `post-service`.  This service implements:
+Now that you have the project running, you probably want to do something useful.  The default project creates a CRUD service for blog posts.  This service implements:
 
-- `GET /posts`:  retrieve all Posts
-- `GET /posts/:id`:  retrieve the Post with the given ID
+- POST /blogposts - creates a new BLOG_POST record from the JSON body
+- GET /blogposts - retrieve all BLOG_POST records
+- GET /blogposts/:id - retrieve the BLOG_POST record with the given ID
+- PUT /blogposts - updates an existing BLOG_POST record by ID from the JSON body
+- DELETE /blogposts/:id - removes the BLOG_POST record with the given ID
 
-These service calls retrieve the data found in the DynamoDB table `POST`.  To customize this service, have a look at the `post-service\index.ts` file.
+These service calls retrieve the data found in the DynamoDB table `POST`.  To customize this service, have a look at the `blogposts\index.ts` file.

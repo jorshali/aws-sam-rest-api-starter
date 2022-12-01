@@ -1,4 +1,4 @@
-export class Post {
+export class BlogPost {
   postId: string;
   slug: string;
   createDate: number;
