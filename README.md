@@ -1,6 +1,6 @@
 # aws-sam-rest-api-starter
 
-A TypeScript-based starter project for creating a REST API with [AWS SAM](https://aws.amazon.com/serverless/sam/).
+A TypeScript-based starter project for creating a REST API with [AWS SAM](https://aws.amazon.com/serverless/sam/).  For a complete tutorial using this project, check out: [Build a REST API with TypeScript in 5 Minutes](https://focus.dev/build-a-rest-api-in-aws-with-typescript-in-5-minutes/).
 
 ## Introduction
 
